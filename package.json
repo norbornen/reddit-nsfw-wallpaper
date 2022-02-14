@@ -1,0 +1,68 @@
+{
+  "name": "reddit-wallpaper-app",
+  "version": "1.0.0",
+  "author": "norbornen",
+  "license": "Apache-2.0",
+  "keywords": [
+    "reddit",
+    "wallpaper"
+  ],
+  "repository": "https://github.com/norbornen/reddit-nsfw-wallpaper",
+  "main": "app/dist/main/index.js",
+  "types": "app/dist/main/index.d.ts",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild",
+    "build": "yarn workspace main build",
+    "build:app": "yarn electron-build --dir",
+    "build:all": "yarn electron-build build -mwl",
+    "build:mac": "yarn electron-build build --mac",
+    "build:linux": "yarn electron-build build --linux",
+    "build:windows": "yarn electron-build build --windows --x64",
+    "electron-build": "yarn build && electron-rebuild && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^17.0.0",
+    "electron-builder": "^22.14.13",
+    "electron-rebuild": "^3.2.7"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "cycled": "1",
+    "electron-log": "^4.4.6",
+    "get-stream": "^6.0.1",
+    "http-errors": "^2.0.0",
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.3.1",
+    "wallpaper": "5"
+  },
+  "workspaces": ["main"],
+  "build": {
+    "appId": "net.norbornen.reddit-wallpaper",
+    "productName": "reddit-wallpaper",
+    "artifactName": "${productName}.${ext}",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "app/**/*"
+    ],
+    "mac": {
+      "icon": "resources/icons/icon.icns"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "category": "Settings"
+    }
+  }
+}
