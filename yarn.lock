@@ -290,15 +290,15 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.17.tgz#a8ddf6e0c2341718d74ee3dc413a13a042c45a0c"
   integrity sha512-e8PUNQy1HgJGV3iU/Bp2+D/DXh3PYeyli8LgIwsQcs1Ar1LoaWHSIT6Rw+H2rNJmiq6SNWiDytfx8+gYj7wDHw==
 
+"@types/node@16":
+  version "16.11.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.26.tgz#63d204d136c9916fb4dcd1b50f9740fe86884e47"
+  integrity sha512-GZ7bu5A6+4DtG7q9GsoHXy3ALcgeIHP4NnL0Vv2wu0uUB/yQex26v0tf6/na1mm0+bS9Uw+0DFex7aaKr2qawQ==
+
 "@types/node@^14.6.2":
   version "14.18.11"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.11.tgz#9bd810a959e1728d78df0f68b5c825b8ea7156f4"
   integrity sha512-zCoCEMA+IPpsRkyCFBqew5vGb7r8RSiB3uwdu/map7uwLAfu1MTazW26/pUDWoNnF88vJz4W3U56i5gtXNqxGg==
-
-"@types/node@^17.0.21":
-  version "17.0.21"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.21.tgz#864b987c0c68d07b4345845c3e63b75edd143644"
-  integrity sha512-DBZCJbhII3r90XbQxI8Y9IjjiiOGlZ0Hr32omXIZvwwZ7p4DMMXGrKXVyPfuoBOri9XNtL0UK69jYIBIsRX3QQ==
 
 "@types/plist@^3.0.1":
   version "3.0.2"
@@ -974,6 +974,11 @@ commander@2.9.0:
   dependencies:
     graceful-readlink ">= 1.0.0"
 
+commander@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"
+  integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
+
 commander@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
@@ -1046,7 +1051,7 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
+cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
   integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
@@ -1325,10 +1330,10 @@ electron-rebuild@^3.2.7:
     tar "^6.0.5"
     yargs "^17.0.1"
 
-electron@^17.1.0:
-  version "17.1.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-17.1.0.tgz#7539937d294413af8efba69dc370cf7d2b0cdc72"
-  integrity sha512-X/qdldmQ8lA15NmeraubWCTtMeTO8K9Ser0wtSCgOXVh53Sr1Ea0VQQ7Q9LuGgWRVz4qtr40cntuEdM8icdmTw==
+electron@16:
+  version "16.0.10"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-16.0.10.tgz#300fe18c0f8096d337e241a2503522011429326b"
+  integrity sha512-QSxkVpvSpLzhSVlPRVOoJc/O/ZsbZm64qvSJeXsYfaH4rQjqBJwAFPuHhbhxzrBDWjH6FrBiNNzWZufSoTz1QQ==
   dependencies:
     "@electron/get" "^1.13.0"
     "@types/node" "^14.6.2"
@@ -1357,6 +1362,14 @@ end-of-stream@^1.1.0:
   integrity sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==
   dependencies:
     once "^1.4.0"
+
+env-cmd@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/env-cmd/-/env-cmd-10.1.0.tgz#c7f5d3b550c9519f137fdac4dd8fb6866a8c8c4b"
+  integrity sha512-mMdWTT9XKN7yNth/6N6g2GuKuJTsKMDHlQFUDacb/heQRRWOTIZ42t1rMHnQu4jYxU1ajdTeJM+9eEETlqToMA==
+  dependencies:
+    commander "^4.0.0"
+    cross-spawn "^7.0.0"
 
 env-paths@^2.2.0:
   version "2.2.1"

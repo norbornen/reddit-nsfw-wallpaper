@@ -1,7 +1,7 @@
 {
   "name": "reddit-wallpaper-app",
-  "version": "1.0.1",
-  "author": "norbornen",
+  "version": "1.0.2",
+  "author": "norbornen <example@example.com>",
   "license": "Apache-2.0",
   "keywords": [
     "reddit",
@@ -16,16 +16,17 @@
     "rebuild": "electron-rebuild",
     "build": "yarn workspace main build",
     "build:app": "yarn electron-build --dir",
-    "build:all": "yarn electron-build build -mwl",
-    "build:mac": "yarn electron-build build --mac",
-    "build:linux": "yarn electron-build build --linux",
-    "build:windows": "yarn electron-build build --windows --x64",
+    "build:all": "env-cmd yarn electron-build build -mwl -p always",
+    "build:mac": "yarn electron-build build --mac -p never",
+    "build:linux": "yarn electron-build build --linux -p never",
+    "build:windows": "yarn electron-build build --windows --x64 -p never",
     "electron-build": "yarn build && electron-rebuild && electron-builder"
   },
   "devDependencies": {
-    "electron": "^17.1.0",
+    "electron": "16",
     "electron-builder": "^22.14.13",
-    "electron-rebuild": "^3.2.7"
+    "electron-rebuild": "^3.2.7",
+    "env-cmd": "^10.1.0"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
@@ -37,9 +38,11 @@
     "tslib": "^2.3.1",
     "wallpaper": "5"
   },
-  "workspaces": ["main"],
+  "workspaces": [
+    "main"
+  ],
   "build": {
-    "appId": "net.norbornen.reddit-wallpaper",
+    "appId": "io.github.norbornen.reddit-wallpaper",
     "productName": "reddit-wallpaper",
     "artifactName": "${productName}.${ext}",
     "asar": true,
@@ -50,6 +53,7 @@
       "app/**/*"
     ],
     "mac": {
+      "category": "public.app-category.utilities",
       "icon": "resources/icons/icon.icns"
     },
     "win": {
@@ -63,6 +67,13 @@
         "AppImage"
       ],
       "category": "Settings"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "norbornen",
+        "repo": "reddit-nsfw-wallpaper"
+      }
+    ]
   }
 }

@@ -11,50 +11,55 @@ export class SubredditScraper {
 
   constructor(public readonly subreddit: string) {}
 
-  async fetchSubreddit(size = 50): Promise<RedditPost[]> {
-    const posts: RedditPost[] = [];
-    let count = 15;
-    let currentBeforeValue: string | undefined;
+  async *fetchSubreddit(size = 50) {
+    let fetchedPostsCount = 0;
+    let fetchedPagesCount = 10;
+    let currentAfterValue: string | undefined;
+
     do {
       const items = await this.doRequest(this.subreddit, 'new', {
-        before: currentBeforeValue,
+        after: currentAfterValue,
       }).catch((err) => {
         logger.error(`[fetchSubreddit] [${this.subreddit}] FAIL`);
         logger.error(err);
         return null;
       });
-
-      if (!items?.data?.children) {
+      if (!items?.data?.children || items.data.children.length === 0) {
         break;
       }
 
-      const children = items.data.children;
-      const lastChild = children[children.length - 1];
-      currentBeforeValue = lastChild.data.name;
-
-      children.forEach(({ data: item }) => {
+      const { after, children } = items.data;
+      const posts = children.reduce<RedditPost[]>((acc, { data: item }) => {
         try {
           if (item.is_gallery !== true) {
             const post = plainToInstance(RedditPost, item);
-            if (
-              ['jpg', 'png'].includes(post.getFileExtname() || '') &&
-              post.isHorizontal()
-            ) {
-              posts.push(post);
+            const ext = post.getFileExtname() || '';
+            if (['jpg', 'png'].includes(ext) && post.isHorizontal()) {
+              acc.push(post);
             }
           }
         } catch (err) {
           logger.error(err);
         }
-      });
-    } while (count-- > 0 && posts.length <= size);
+        return acc;
+      }, []);
 
-    return posts;
+      if (posts.length > 0) {
+        yield posts;
+      }
+
+      const newAfterValue = after || children[children.length - 1].data.name;
+      if (newAfterValue === currentAfterValue) {
+        break;
+      }
+      currentAfterValue = newAfterValue;
+      fetchedPostsCount += posts.length;
+    } while (fetchedPagesCount-- > 0 && fetchedPostsCount < size);
   }
 
   async fetchSubredditUpdates(): Promise<RedditPost[]> {
     const items = await this.doRequest(this.subreddit, 'new', {
-      after: this.lastRequestItemName,
+      before: this.lastRequestItemName,
     }).catch((err) => {
       logger.error(`[fetchSubredditUpdates] [${this.subreddit}] FAIL`);
       logger.error(err);

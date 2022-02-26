@@ -93,7 +93,6 @@ export class WallpaperService {
         logger.error(err);
       }
     }
-
     await this.nextWallpaper();
   }
 

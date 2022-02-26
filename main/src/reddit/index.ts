@@ -55,66 +55,49 @@ export class RedditCollection {
       this.cycled = undefined;
     }
     this.scrapers.clear();
+    this.names.clear();
   }
 
   private async init(): Promise<void> {
-    const res = await Promise.allSettled(
-      this.subreddits.map((sr) => this.scrapers.get(sr)!.fetchSubreddit()),
-    );
-
-    if (!this.cycled) {
-      return;
-    }
-
-    const posts: RedditPost[] = [];
-    for (let i = 0; i < res.length; i++) {
-      const r = res[i];
-      if (r.status === 'fulfilled') {
-        posts.push(...(r.value || []));
-      } else {
-        logger.error(this.subreddits[i], r.reason);
-      }
-    }
-
-    if (posts.length > 0) {
-      posts
-        .sort((a, b) => (b.created_utc || 0) - (a.created_utc || 0))
-        .forEach((post) => {
-          if (!this.names.has(post.name)) {
-            this.names.add(post.name);
-            this.cycled!.push(post);
+    return new Promise(async (resolve) => {
+      for (const sr of this.subreddits) {
+        const scraper = this.scrapers.get(sr);
+        if (scraper) {
+          for await (const posts of scraper.fetchSubreddit()) {
+            if (posts?.length > 0) {
+              posts.forEach((post) => {
+                if (!this.names.has(post.name) && this.cycled) {
+                  this.names.add(post.name);
+                  this.cycled.push(post);
+                }
+              });
+              resolve();
+            }
           }
-        });
-    }
 
-    this.upgradeTimer = setInterval(
-      this.upgrade.bind(this),
-      this.upgradeInterval,
-    );
+          this.cycled?.sort(
+            (a, b) => (a.created_utc || 0) - (b.created_utc || 0),
+          );
+        }
+      }
+
+      this.upgradeTimer = setInterval(
+        this.upgrade.bind(this),
+        this.upgradeInterval,
+      );
+    });
   }
 
   private async upgrade(): Promise<void> {
-    const res = await Promise.allSettled(
-      this.subreddits.map((sr) =>
-        this.scrapers.get(sr)!.fetchSubredditUpdates(),
-      ),
-    );
+    const posts = (
+      await Promise.all(
+        this.subreddits.map((sr) =>
+          this.scrapers.get(sr)!.fetchSubredditUpdates(),
+        ),
+      )
+    ).flat();
 
-    if (!this.cycled) {
-      return;
-    }
-
-    const posts: RedditPost[] = [];
-    for (let i = 0; i < res.length; i++) {
-      const r = res[i];
-      if (r.status === 'fulfilled') {
-        posts.push(...(r.value || []));
-      } else {
-        logger.error(this.subreddits[i], r.reason);
-      }
-    }
-
-    if (posts.length > 0) {
+    if (posts.length > 0 && this.cycled) {
       posts
         .sort((a, b) => (a.created_utc || 0) - (b.created_utc || 0))
         .forEach((post) => {

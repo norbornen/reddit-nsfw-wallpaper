@@ -6,6 +6,7 @@ export class RedditPost {
   id!: string;
   name!: string;
   url!: string;
+  subreddit!: string;
   preview?: {
     images?: Array<{
       source: {
