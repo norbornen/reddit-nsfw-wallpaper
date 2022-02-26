@@ -9,14 +9,11 @@ export class SubredditScraper {
   private lastRequestItemName!: string;
   private lastRequestItemTimestamp!: number;
 
-  constructor(
-    public readonly subreddit: string,
-    private readonly size: number = 50,
-  ) {}
+  constructor(public readonly subreddit: string) {}
 
-  async fetchSubreddit(): Promise<RedditPost[]> {
+  async fetchSubreddit(size = 50): Promise<RedditPost[]> {
     const posts: RedditPost[] = [];
-    let count = 10;
+    let count = 15;
     let currentBeforeValue: string | undefined;
     do {
       const items = await this.doRequest(this.subreddit, 'new', {
@@ -40,7 +37,7 @@ export class SubredditScraper {
           if (item.is_gallery !== true) {
             const post = plainToInstance(RedditPost, item);
             if (
-              ['jpg', 'png'].includes(post.getFileExtname()!) &&
+              ['jpg', 'png'].includes(post.getFileExtname() || '') &&
               post.isHorizontal()
             ) {
               posts.push(post);
@@ -50,7 +47,7 @@ export class SubredditScraper {
           logger.error(err);
         }
       });
-    } while (count-- > 0 && posts.length <= this.size);
+    } while (count-- > 0 && posts.length <= size);
 
     return posts;
   }

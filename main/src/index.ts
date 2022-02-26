@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { app, Menu, Tray } from 'electron';
+import { app, Menu, MenuItemConstructorOptions, Tray } from 'electron';
 import logger from 'electron-log';
 
 import { appConfig } from './config';
@@ -17,17 +17,17 @@ let tray: Tray | undefined;
     return;
   }
 
-  await app.whenReady();
-  app.dock?.hide();
-
   wallpaperService = new WallpaperService(
     appConfig.subreddits.boobs,
     30 * 60 * 1000,
   );
 
-  tray = new Tray(appConfig.trayImage);
-  const menu = Menu.buildFromTemplate([
-    { label: `What's in the picture` },
+  await app.whenReady();
+  app.dock?.hide();
+
+  let lastIntervalValue: number | undefined;
+  const menuTemplate: MenuItemConstructorOptions[] = [
+    { label: `What's in the picture`, enabled: false },
     {
       label: 'Boobs',
       type: 'radio',
@@ -47,7 +47,7 @@ let tray: Tray | undefined;
       click: () => (wallpaperService!.subreddits = appConfig.subreddits.pets),
     },
     { type: 'separator' },
-    { label: `Refresh rate` },
+    { label: `Refresh rate`, enabled: false },
     {
       label: '15s',
       type: 'radio',
@@ -85,9 +85,38 @@ let tray: Tray | undefined;
       click: () => (wallpaperService!.interval = 60 * 60 * 1000),
     },
     { type: 'separator' },
+    {
+      label: 'Next',
+      click: () => wallpaperService!.nextWallpaper(),
+    },
+    {
+      label: 'Previous',
+      click: () => wallpaperService!.previousWallpaper(),
+    },
+    {
+      label: 'Pause',
+      type: 'radio',
+      checked: false,
+      click: () => {
+        lastIntervalValue = wallpaperService!.interval;
+        wallpaperService!.interval = Infinity;
+      },
+    },
+    {
+      label: 'Continue',
+      type: 'radio',
+      checked: true,
+      click: () => {
+        wallpaperService!.interval = lastIntervalValue || 60 * 1000;
+      },
+    },
+    { type: 'separator' },
     { label: `Reddit Wallpapers v${process.env.npm_package_version}` },
     { label: 'Quit', role: 'quit' },
-  ]);
+  ];
+
+  tray = new Tray(appConfig.trayImage);
+  const menu = Menu.buildFromTemplate(menuTemplate);
   tray.setContextMenu(menu);
   tray.setToolTip(`Reddit Wallpapers v${process.env.npm_package_version}`);
 })().catch(logger.error);

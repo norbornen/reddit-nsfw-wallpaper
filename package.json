@@ -1,6 +1,6 @@
 {
   "name": "reddit-wallpaper-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "norbornen",
   "license": "Apache-2.0",
   "keywords": [
@@ -23,7 +23,7 @@
     "electron-build": "yarn build && electron-rebuild && electron-builder"
   },
   "devDependencies": {
-    "electron": "^17.0.0",
+    "electron": "^17.1.0",
     "electron-builder": "^22.14.13",
     "electron-rebuild": "^3.2.7"
   },

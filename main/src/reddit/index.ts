@@ -6,10 +6,10 @@ import { RedditPost } from './entities/post';
 
 export class RedditCollection {
   private upgradeInterval = 29 * 60 * 1000; // 29m
-  private upgradeTimer!: NodeJS.Timer;
+  private upgradeTimer?: NodeJS.Timer;
 
   private scrapers = new Map<string, SubredditScraper>();
-  private cycled = new Cycled<RedditPost>([]);
+  private cycled? = new Cycled<RedditPost>([]);
   private names = new Set<string>();
 
   constructor(public readonly subreddits: Readonly<string[]>) {
@@ -19,13 +19,13 @@ export class RedditCollection {
 
     subreddits.forEach((sr) => {
       if (!this.scrapers.has(sr)) {
-        this.scrapers.set(sr, new SubredditScraper(sr, 40));
+        this.scrapers.set(sr, new SubredditScraper(sr));
       }
     });
   }
 
   get size() {
-    return this.cycled.length;
+    return this.cycled?.length;
   }
 
   async next(): Promise<RedditPost | null> {
@@ -38,13 +38,21 @@ export class RedditCollection {
     return null;
   }
 
+  async previous(): Promise<RedditPost | null> {
+    if (this.cycled && this.cycled.length > 0) {
+      return this.cycled.previous();
+    }
+    return null;
+  }
+
   destroy() {
     if (this.upgradeTimer) {
       clearInterval(this.upgradeTimer);
+      this.upgradeTimer = undefined;
     }
     if (this.cycled) {
       this.cycled.length = 0;
-      this.cycled = undefined as any;
+      this.cycled = undefined;
     }
     this.scrapers.clear();
   }
@@ -53,6 +61,10 @@ export class RedditCollection {
     const res = await Promise.allSettled(
       this.subreddits.map((sr) => this.scrapers.get(sr)!.fetchSubreddit()),
     );
+
+    if (!this.cycled) {
+      return;
+    }
 
     const posts: RedditPost[] = [];
     for (let i = 0; i < res.length; i++) {
@@ -70,7 +82,7 @@ export class RedditCollection {
         .forEach((post) => {
           if (!this.names.has(post.name)) {
             this.names.add(post.name);
-            this.cycled.push(post);
+            this.cycled!.push(post);
           }
         });
     }
@@ -88,6 +100,10 @@ export class RedditCollection {
       ),
     );
 
+    if (!this.cycled) {
+      return;
+    }
+
     const posts: RedditPost[] = [];
     for (let i = 0; i < res.length; i++) {
       const r = res[i];
@@ -104,7 +120,7 @@ export class RedditCollection {
         .forEach((post) => {
           if (!this.names.has(post.name)) {
             this.names.add(post.name);
-            this.cycled.unshift(post);
+            this.cycled!.unshift(post);
           }
         });
     }

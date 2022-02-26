@@ -7,6 +7,7 @@ import wallpaper from 'wallpaper';
 
 import agent from './http-transport';
 import { RedditCollection } from './reddit';
+import { RedditPost } from './reddit/entities/post';
 
 export class WallpaperService {
   private _interval?: number;
@@ -37,17 +38,25 @@ export class WallpaperService {
     process.nextTick(() => this.init().catch(logger.error));
   }
 
+  get interval() {
+    return this._interval!;
+  }
+
   set interval(interval: number) {
-    if (!(Number.isInteger(interval) && interval > 0)) {
+    if (Number.isNaN(interval) || interval < 0) {
       throw new Error('INCORRECT_INTERVAL_VALUE');
     }
     if (this._interval !== interval) {
       this._interval = interval;
-
       if (this.upgradeTimer) {
         clearInterval(this.upgradeTimer);
       }
-      this.upgradeTimer = setInterval(this.nextWallpaper.bind(this), interval);
+      if (interval !== Infinity) {
+        this.upgradeTimer = setInterval(
+          this.nextWallpaper.bind(this),
+          interval,
+        );
+      }
     }
   }
 
@@ -58,9 +67,11 @@ export class WallpaperService {
   async destroy() {
     if (this.upgradeTimer) {
       clearInterval(this.upgradeTimer);
+      this.upgradeTimer = undefined;
     }
     if (this.collection) {
       this.collection.destroy();
+      this.collection = undefined;
     }
     if (this.defaultWallpaper) {
       await wallpaper
@@ -86,12 +97,21 @@ export class WallpaperService {
     await this.nextWallpaper();
   }
 
-  private async nextWallpaper(): Promise<void> {
+  async nextWallpaper(): Promise<void> {
     const post = await this.collection?.next();
-    if (!post?.url) {
-      return;
+    if (post?.url) {
+      await this.setupWallpaper(post);
     }
+  }
 
+  async previousWallpaper(): Promise<void> {
+    const post = await this.collection?.previous();
+    if (post?.url) {
+      await this.setupWallpaper(post);
+    }
+  }
+
+  private async setupWallpaper(post: RedditPost): Promise<void> {
     const previousFilename = this.filename;
     const fileExtname = (post.getFileExtname() || 'jpg').toLocaleLowerCase();
     const filename = `dpk-wallpaper-${this.fileindex++}.${fileExtname}`;

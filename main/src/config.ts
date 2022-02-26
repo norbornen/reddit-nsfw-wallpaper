@@ -19,6 +19,8 @@ export const appConfig: IAppConfig = {
       'BiggerThanYouThought',
       'gonewild',
       'palegirls',
+      'nipples',
+      'small',
     ],
     balls: ['dickpic', 'penis', 'softies', 'balls', 'ratemycock', 'cock'],
     pets: [

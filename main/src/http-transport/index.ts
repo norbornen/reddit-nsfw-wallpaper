@@ -24,6 +24,7 @@ async function get<T>(
   });
   urlEntity.search = qs.toString();
   const url = urlEntity.toString();
+  // logger.info(url);
 
   return new Promise<T>((resolve, reject) => {
     const request = net.request({
