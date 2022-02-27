@@ -20,17 +20,27 @@ export class RedditPost {
   created_utc!: number;
 
   isHorizontal(): boolean {
-    try {
-      const pathname = new URL(this.url).pathname;
+    const filename = this.getFileName();
+    if (filename) {
       const source = this.preview?.images?.find((x) =>
-        x.source?.url?.includes(pathname),
+        x.source?.url?.includes(filename),
       )?.source;
       if (source && source?.width > source?.height) {
         return true;
       }
-    } catch (err) {
-      logger.error(this.url);
-      logger.error(err);
+    }
+    return false;
+  }
+
+  isHorizontalOrLarge(): boolean {
+    const filename = this.getFileName();
+    if (filename) {
+      const source = this.preview?.images?.find((x) =>
+        x.source?.url?.includes(filename),
+      )?.source;
+      if (source && (source.width > source.height || source.width > 1400)) {
+        return true;
+      }
     }
     return false;
   }

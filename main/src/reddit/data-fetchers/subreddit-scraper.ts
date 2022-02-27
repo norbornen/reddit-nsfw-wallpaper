@@ -30,16 +30,12 @@ export class SubredditScraper {
 
       const { after, children } = items.data;
       const posts = children.reduce<RedditPost[]>((acc, { data: item }) => {
-        try {
-          if (item.is_gallery !== true) {
-            const post = plainToInstance(RedditPost, item);
-            const ext = post.getFileExtname() || '';
-            if (['jpg', 'png'].includes(ext) && post.isHorizontal()) {
-              acc.push(post);
-            }
+        if (item.is_gallery !== true) {
+          const post = plainToInstance(RedditPost, item);
+          const ext = post.getFileExtname() || '';
+          if (['jpg', 'png'].includes(ext) && post.isHorizontalOrLarge()) {
+            acc.push(post);
           }
-        } catch (err) {
-          logger.error(err);
         }
         return acc;
       }, []);

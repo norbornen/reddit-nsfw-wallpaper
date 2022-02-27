@@ -59,7 +59,7 @@ let tray: Tray | undefined;
       label: '1m',
       type: 'radio',
       checked: true,
-      click: () => (wallpaperService!.interval = 15 * 60 * 1000),
+      click: () => (wallpaperService!.interval = 1 * 60 * 1000),
     },
     {
       label: '5m',

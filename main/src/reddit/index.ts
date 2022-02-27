@@ -74,10 +74,18 @@ export class RedditCollection {
               resolve();
             }
           }
+        }
+      }
+      logger.log(
+        `init "${this.subreddits.join(', ')}", ${this.cycled?.length || 0}`,
+      );
 
-          this.cycled?.sort(
-            (a, b) => (a.created_utc || 0) - (b.created_utc || 0),
-          );
+      if (this.cycled && this.cycled.length > 0) {
+        this.cycled?.sort(
+          (a, b) => (b.created_utc || 0) - (a.created_utc || 0),
+        );
+        if (this.cycled.length > 10) {
+          this.cycled.index = 0;
         }
       }
 
@@ -96,6 +104,9 @@ export class RedditCollection {
         ),
       )
     ).flat();
+    logger.log(
+      `upgrade "${this.subreddits.join(', ')}", ${this.cycled?.length || 0}`,
+    );
 
     if (posts.length > 0 && this.cycled) {
       posts

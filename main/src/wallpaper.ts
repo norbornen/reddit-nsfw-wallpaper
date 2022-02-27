@@ -99,6 +99,7 @@ export class WallpaperService {
   async nextWallpaper(): Promise<void> {
     const post = await this.collection?.next();
     if (post?.url) {
+      // logger.log(post.subreddit, new Date(post.created_utc * 1000));
       await this.setupWallpaper(post);
     }
   }
@@ -123,13 +124,15 @@ export class WallpaperService {
 
       this.filename = filename;
 
-      await wallpaper.set(filepath, { scale: 'fill', screen: 'all' });
-
+      await wallpaper
+        .set(filepath, { scale: 'fill', screen: 'all' })
+        .catch(logger.error);
+    } catch (err) {
+      logger.error(err);
+    } finally {
       if (previousFilename) {
         this.unlink(previousFilename);
       }
-    } catch (err) {
-      logger.error(err);
     }
   }
 
