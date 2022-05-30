@@ -24,14 +24,14 @@
   },
   "devDependencies": {
     "electron": "16",
-    "electron-builder": "^22.14.13",
+    "electron-builder": "^23.0.3",
     "electron-rebuild": "^3.2.7",
     "env-cmd": "^10.1.0"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
     "cycled": "1",
-    "electron-log": "^4.4.6",
+    "electron-log": "^4.4.7",
     "get-stream": "^6.0.1",
     "http-errors": "^2.0.0",
     "reflect-metadata": "^0.1.13",
